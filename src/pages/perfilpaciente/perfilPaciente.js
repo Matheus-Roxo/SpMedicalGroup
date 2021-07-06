@@ -1,6 +1,6 @@
 import { Component } from 'react'
 
-class Perfil extends Component{
+class PerfilPaciente extends Component{
     constructor (props){
         super(props);
         this.state = {
@@ -32,10 +32,10 @@ class Perfil extends Component{
             <div>
                 <main>
                     <section>
-                        <h2> ola </h2>
+                        <h2> ola você é um paciente </h2>
                         <table>
                             <thread>
-                                <tr>
+                                    <tr>
                                     <th>1</th>
                                     <th>Titulo</th>
                                 </tr>
@@ -61,4 +61,4 @@ class Perfil extends Component{
     }
 }
 
-export default Perfil;
+export default PerfilPaciente;
