@@ -9,7 +9,6 @@ class Login extends Component {
         this.state = {
             email : '',
             senha : '',
-            erroMensagem : '',
             isLoading : false
         }
     };
@@ -98,7 +97,7 @@ class Login extends Component {
                     {
                         this.state.isLoading === false &&
                         <div className="justify-center">
-                            <input id="btn-login"
+                            <input id="botão-login"
                             required
                             type="submit"
                             name="Entrar"

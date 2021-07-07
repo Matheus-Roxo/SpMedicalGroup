@@ -7,7 +7,7 @@ export default function PerfilMedicos() {
 
     const [listaConsultas, setConsulta] = useState([])
     const [descricaoAtendimento, setDescricaoAtendimento] = useState('')
-    const [emModoEdicao, setEmModoEdicao] = useState({
+    const [emModoEdicao, setEditando] = useState({
         status: false,
         idLinha: null
     })
@@ -28,9 +28,9 @@ export default function PerfilMedicos() {
             .catch(erro => console.log(erro))
     }
 
-    function emEdicao({ idLinha, descricaoAtual }) {
+    function editando({ idLinha, descricaoAtual }) {
 
-        setEmModoEdicao({
+        setEditando({
 
             status: true,
             idLinha: idLinha
@@ -38,7 +38,7 @@ export default function PerfilMedicos() {
 
         setDescricaoAtendimento(descricaoAtual)
     }
-    function salvarEdicao({ idLinha, novaDescricao }) {
+    function confirmarEdicao({ idLinha, novaDescricao }) {
 
         patchDescricao({ idLinha, novaDescricao })
 
@@ -47,7 +47,7 @@ export default function PerfilMedicos() {
 
     function cancelarEdicao() {
 
-        setEmModoEdicao({
+        setEditando({
             status: false,
             idLinha: null
         })
@@ -102,8 +102,7 @@ export default function PerfilMedicos() {
                             <th>Médico</th>
                             <th>Especialidade</th>
                             <th>Status</th>
-                            <th>Descrição Consulta</th>
-                            <th>Edição</th>
+                            <th>Descrição</th>
                         </tr>
 
                     </thead>
@@ -115,10 +114,10 @@ export default function PerfilMedicos() {
                                 return (
                                     <tr key={consulta.idConsulta}>
                                         <td>{consulta.idPacienteNavigation.nomePaciente}</td>
-                                        <td>{consulta.idMedicoNavigation.nomeMedico}</td>
-                                        <td>{consulta.idMedicoNavigation.idEspecialidadeNavigation.descricaoEspecialidade}</td>
                                         <td>{new Date(consulta.dataConsulta).toLocaleDateString()}</td>
                                         <td>{consulta.horarioConsulta}</td>
+                                        <td>{consulta.idMedicoNavigation.nomeMedico}</td>
+                                        <td>{consulta.idMedicoNavigation.idEspecialidadeNavigation.descricaoEspecialidade}</td>
                                         <td>{consulta.idStatusConsultaNavigation.descricaoStatusConsulta}</td>
                                         {
                                             emModoEdicao.status &&
@@ -132,11 +131,16 @@ export default function PerfilMedicos() {
                                                 ) : (<td>{consulta.descricaoAtendimento}</td>)
                                         }
                                         <td id="editar">
-
-                                            <div id="btn-acoes">
-                                                <buttom id="btn-editar"  onClick={() => emEdicao({ idLinha: consulta.idConsulta, descricaoAtual: consulta.descricaoAtendimento })} >mode_edit_outline</buttom>
-                                                <buttom id="btn-salvar"  onClick={() => salvarEdicao({ idLinha: consulta.idConsulta, novaDescricao: descricaoAtendimento })} >check</buttom>
-                                                <buttom id="btn-cancelar"  onClick={() => cancelarEdicao()} >clear</buttom>
+                                            <div id="botão-descrição">
+                                                <input id="botão-login"
+                                                    required
+                                                    type="submit"
+                                                    onClick={() => editando({ idLinha: consulta.idConsulta, descricaoAtual: consulta.descricaoAtendimento })}
+                                                    name="Entrar"
+                                                ></input>
+                                                {/* <buttom id="botão-editar"  onClick={() => editando({ idLinha: consulta.idConsulta, descricaoAtual: consulta.descricaoAtendimento })} >Editar</buttom>
+                                                <buttom id="botão-confirmar"  onClick={() => confirmarEdicao({ idLinha: consulta.idConsulta, novaDescricao: descricaoAtendimento })} >Salvar</buttom>
+                                                <buttom id="botão-cancelar"  onClick={() => cancelarEdicao()} ></buttom> */}
                                             </div>
 
                                         </td>

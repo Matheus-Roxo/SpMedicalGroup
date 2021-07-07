@@ -116,12 +116,7 @@ export default function PerfilAdms() {
 
                             <p>Paciente</p>
 
-                            <select
-
-                                name="idPaciente"
-                                value={idPaciente}
-                                onChange={(event) => setIdPaciente(event.target.value)}
-                            >
+                            <select>
                                 <option value="0">Paciente</option>
 
                                 {
@@ -141,7 +136,6 @@ export default function PerfilAdms() {
                             <p>Médico</p>
 
                             <select
-
                                 name="idMedico"
                                 value={idMedico}
                                 onChange={(event) => setIdMedico(event.target.value)}
@@ -214,10 +208,10 @@ export default function PerfilAdms() {
 
                         </div>
 
-                        <div id="btn-cadastrar">
+                        <div id="botão-cadastrar">
                             {
                                 isLoading === true &&
-                                <button id="btn-adm" type="submit" disabled>
+                                <button id="botão-adm" type="submit" disabled>
                                     Loading...
                                 </button>
                             }
@@ -226,7 +220,7 @@ export default function PerfilAdms() {
 
                             {
                                 isLoading === false &&
-                                <button id="btn-salvar-consultas" className="material-icons" type="submit">
+                                <button id="botão-salvar"  type="submit">
                                     check
                                 </button>
                             }
