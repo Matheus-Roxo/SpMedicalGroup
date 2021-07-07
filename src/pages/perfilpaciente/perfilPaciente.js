@@ -1,64 +1,74 @@
-import { Component } from 'react'
+import React, {useState,useEffect} from 'react'
+import axios from 'axios'
 
-class PerfilPaciente extends Component{
-    constructor (props){
-        super(props);
-        this.state = {
-            listaConsultas : []
-        }
-    }
+import '../../assets/css/style.css'
 
 
-    buscarConsultas = () => {
-        console.log('Testando')
+export default function PerfilPacientes(){
 
-        fetch('http://localhost:5000/api/Consultas')
+    const [ listaConsultas, setConsulta ] = useState( [] )   
+    function getConsultas(){
+        axios.get('http://localhost:5000/api/Consulta/Minhas', {
+            headers : {
+                'Authorization' : 'Bearer ' + localStorage.getItem('usuario-login')
+            }
+        })
+        
+        .then(resposta => {
+            if (resposta.status === 200) {
+                
+                setConsulta(resposta.data)
+            }
+        })   
+        .catch(erro => console.log(erro));
+    }       
+    
+    useEffect( getConsultas, [] ) 
 
-        .then(resposta => resposta.json())
+    return(    
+        <div>
 
-        .then(data => this.setState({listaConsultas : data}))
+            <section>
+    
+                <h2 className="sub-titulo">Consultas Marcadas - Paciente</h2>
+    
+                <table>
+                    
+                    <thead>
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Médico</th>
+                                <th>Especialidade</th>
+                                <th>Status</th>  
+                                <th>Descrição</th>               
+                            </tr> 
+                    </thead>
 
-        .catch((erro) => console.log(erro))
-
-    }
-
-    componentDidMount(){
-         this.buscarConsultas  ();
-
-    }
-
-    render(){
-        return(
-            <div>
-                <main>
-                    <section>
-                        <h2> ola você é um paciente </h2>
-                        <table>
-                            <thread>
-                                    <tr>
-                                    <th>1</th>
-                                    <th>Titulo</th>
-                                </tr>
-                            </thread>
-                                
-                               <tbody>
-                                   {
-                                    this.state.listaConsultas.map( (listaConsulta)  => {
-                                        return (
-                                            <tr> key={listaConsulta.idConsulta}
-                                                <td> key={listaConsulta.idPaciente}</td>
-                                                <td> key={listaConsulta.idMédico}</td>
-                                            </tr>
-                                        )
-                                    })
-                                   }
-                               </tbody>
-                        </table>
-                    </section>
-                </main>
-            </div>
-        );
-    }
+                    <tbody>                   
+                        {
+                            listaConsultas.map((consulta) => {
+                                return(
+                                    <tr key={consulta.idConsulta}> 
+                                        <td>{consulta.idPacienteNavigation.nomePaciente}</td>
+                                        <td>{new Date(consulta.dataConsulta).toLocaleDateString()}</td>
+                                        <td>{consulta.horarioConsulta}</td>
+                                        <td>{consulta.idMedicoNavigation.nomeMedico}</td>
+                                        <td>{consulta.idMedicoNavigation.idEspecialidadeNavigation.descricaoEspecialidade}</td>
+                                        <td>{consulta.descricaoAtendimento}</td>
+                                        <td>{consulta.idStatusConsultaNavigation.descricaoStatusConsulta}</td>
+                                    </tr>
+                                )
+                            })
+                        }                          
+                    </tbody>
+    
+                </table>
+    
+            </section>
+    
+        </div>
+    
+    )
 }
-
-export default PerfilPaciente;

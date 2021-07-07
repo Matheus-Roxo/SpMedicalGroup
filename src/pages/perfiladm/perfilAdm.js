@@ -1,65 +1,289 @@
-import { Component } from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
+import '../../assets/css/style.css';
 
-class PerfilAdm extends Component{
-    constructor (props){
-        super(props);
-        this.state = {
-            listaConsultas : []
-        }
+export default function PerfilAdms() {
+
+    const [idPaciente, setIdPaciente] = useState(0)
+    const [idMedico, setIdMedico] = useState(0)
+    const [idStatusConsulta, setIdStatusConsulta] = useState(0)
+    const [dataConsulta, setDataConsulta] = useState(new Date())
+    const [horarioConsulta, setHorarioConsulta] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const [listaConsultas, setListaConsultas] = useState([])
+    const [listaMedicos, setListaMedicos] = useState([])
+    const [listaPacientes, setListaPacientes] = useState([])
+
+    function getConsultas() {
+        axios.get('http://localhost:5000/api/Consulta', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('usuario-login')
+            }
+        })
+
+            .then(resposta => {
+                if (resposta.status === 200) {
+                    setListaConsultas(resposta.data)
+                }
+            })
+            .catch(erro => console.log(erro))
     }
 
+    function getMedicos() {
+        axios.get('http://localhost:5000/api/Medico', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('usuario-login')
+            }
+        })
 
-    buscarConsultas = () => {
-        console.log('Testando')
-
-        fetch('http://localhost:5000/api/Consultas')
-
-        .then(resposta => resposta.json())
-
-        .then(data => this.setState({listaConsultas : data}))
-
-        .catch((erro) => console.log(erro))
-
+            .then(resposta => {
+                if (resposta.status === 200) {
+                    setListaMedicos(resposta.data)
+                }
+            })
+            .catch(erro => console.log(erro))
     }
 
-    componentDidMount(){
-         this.buscarConsultas  ();
+    function getPacientes() {
+        axios.get('http://localhost:5000/api/Paciente', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('usuario-login')
+            }
+        })
 
+            .then(resposta => {
+                if (resposta.status === 200) {
+                    setListaPacientes(resposta.data)
+                }
+            })
+            .catch(erro => console.log(erro))
     }
 
-    render(){
-        return(
-            <div>
-                <main>
-                    <section>
-                        <h2> ola você é um administrador </h2>
-                        <table>
-                            <thread>
-                                <tr>
-                                    <th>1</th>
-                                    <th>Titulo</th>
-                                </tr>
-                            </thread>
-                                
-                               <tbody>
-                                   {
-                                    this.state.listaConsultas.map( (listaConsulta)  => {
+    function postConsultas(event) {
+
+        event.preventDefault()
+        setIsLoading(true)
+        axios.post('http://localhost:5000/api/Consulta', {
+
+            idPaciente: idPaciente,
+            idMedico: idMedico,
+            dataConsulta: new Date(dataConsulta),
+            horarioConsulta: horarioConsulta,
+            idStatusConsulta: idStatusConsulta,
+            descricaoAtendimento: ' - - - - N/A - - - - '
+
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('usuario-login')
+            }
+        })
+
+            .then(resposta => {
+
+                if (resposta.status === 201) {
+
+                    console.log('A sua consulta foi cadastrada com sucesso')
+                    setIsLoading(false)
+                    getConsultas();
+
+                }
+            })
+
+            .catch(erro => {
+                console.log(erro)
+                setIsLoading(false)
+            })
+
+    };
+
+    useEffect(getConsultas, [])
+
+    useEffect(getMedicos, [])
+
+    useEffect(getPacientes, [])
+
+
+    return (
+
+        <div className="pg-adm">
+            <div className="conteudo-adm">
+                <section className="cadastro">
+                    <h2 className="sub-titulo">Cadastro de Consultas </h2>
+                    <form id="cadastro-consulta" onSubmit={postConsultas}>
+
+                        <div className="campos">
+
+                            <p>Paciente</p>
+
+                            <select
+
+                                name="idPaciente"
+                                value={idPaciente}
+                                onChange={(event) => setIdPaciente(event.target.value)}
+                            >
+                                <option value="0">Paciente</option>
+
+                                {
+                                    listaPacientes.map(paciente => {
                                         return (
-                                            <tr> key={listaConsulta.idConsulta}
-                                                <td> key={listaConsulta.idPaciente}</td>
-                                                <td> key={listaConsulta.idMédico}</td>
-                                            </tr>
+                                            <option key={paciente.idPaciente} value={paciente.idPaciente}>
+                                                {paciente.nomePaciente}
+                                            </option>
                                         )
                                     })
-                                   }
-                               </tbody>
-                        </table>
-                    </section>
-                </main>
-            </div>
-        );
-    }
-}
+                                }
 
-export default PerfilAdm;
+                            </select>
+                        </div>
+                        <div className="campos">
+
+                            <p>Médico</p>
+
+                            <select
+
+                                name="idMedico"
+                                value={idMedico}
+                                onChange={(event) => setIdMedico(event.target.value)}
+                            >
+                                <option value="0">Médico</option>
+
+                                {
+                                    listaMedicos.map(medico => {
+                                        return (
+                                            <option
+                                                key={medico.idMedico}
+                                                value={medico.idMedico}>
+                                                {medico.nomeMedico} - {medico.idEspecialidadeNavigation.descricaoEspecialidade}
+                                            </option>
+                                        )
+                                    })
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <div className="campos">
+
+                            <p>Data</p>
+
+                            <input
+
+                                type="date"
+                                name="dataConsulta"
+                                value={dataConsulta}
+                                onChange={(event) => setDataConsulta(event.target.value)}
+                                placeholder="Data Consulta"
+
+                            />
+
+                        </div>
+
+                        <div className="campos">
+
+                            <p>Horário</p>
+
+                            <input
+
+                                type="time"
+                                name="horarioConsulta"
+                                value={horarioConsulta}
+                                onChange={(event) => setHorarioConsulta(event.target.value)}
+                                placeholder="Horário"
+
+                            />
+
+                        </div>
+
+                        <div className="campos">
+
+                            <p>Status</p>
+
+                            <select
+                                name="idStatusConsulta"
+                                value={idStatusConsulta}
+                                onChange={(event) => setIdStatusConsulta(event.target.value)}
+
+                            >
+                                <option value="1">Agendado</option>
+                                <option value="2">Cancelado</option>
+                                <option value="3">Realizado</option>
+
+                            </select>
+
+                        </div>
+
+                        <div id="btn-cadastrar">
+                            {
+                                isLoading === true &&
+                                <button id="btn-adm" type="submit" disabled>
+                                    Loading...
+                                </button>
+                            }
+
+
+
+                            {
+                                isLoading === false &&
+                                <button id="btn-salvar-consultas" className="material-icons" type="submit">
+                                    check
+                                </button>
+                            }
+                        </div>
+
+
+
+
+                    </form>
+
+                </section>
+
+                <hr />
+
+                <section id="historico-consulta">
+
+                    <h2 className="sub-titulo">Todas as Consultas - ADM</h2>
+
+                    <table id="table-adm">
+
+                        <thead>
+
+                            <tr>
+                                <th>Paciente</th>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Médico</th>
+                                <th>Especialidade</th>
+                                <th>Status</th>
+                                <th>Descrição</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+                            {
+                                listaConsultas.map((consulta) => {
+                                    return (
+                                        <tr key={consulta.idConsulta}>
+                                            <td>{consulta.idPacienteNavigation.nomePaciente}</td>
+                                            <td>{new Date(consulta.dataConsulta).toLocaleDateString()}</td>
+                                            <td>{consulta.horarioConsulta}</td>
+                                            <td>{consulta.idMedicoNavigation.nomeMedico}</td>
+                                            <td>{consulta.idMedicoNavigation.idEspecialidadeNavigation.descricaoEspecialidade}</td>
+                                            <td>{consulta.idStatusConsultaNavigation.descricaoStatusConsulta}</td>
+                                            <td>{consulta.descricaoAtendimento}</td>
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </tbody>
+
+                    </table>
+
+                </section>
+            </div>
+        </div>
+
+    )
+}

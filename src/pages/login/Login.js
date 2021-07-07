@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { parseJwt, usuarioAutenticado } from '../services/auth';
+import '../../assets/css/style.css'
 
 class Login extends Component {
     constructor(props){
@@ -72,39 +72,46 @@ class Login extends Component {
 
     render(){
         return(
-            <div>
-                <main>
-                    <section>
-                        <p>Bem vindo(a)!</p>                                                                        
+        <div id="container-login">
+            <section className="card-login">
+                <form onSubmit={this.efetuaLogin}>
+                    <div className="input-login">
+                        <input
+                            required
+                            type="email"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.atualizaStateCampo}
+                            placeholder="Email" />
+                    </div>
 
-                         <form onSubmit={this.efetuaLogin}>
-                             <input
-                             type="text"
-                             name="email"
+                    <div className="input-login">
+                        <input
+                            required
+                            type="password"
+                            name="senha"
+                            value={this.state.senha}
+                            onChange={this.atualizaStateCampo}
+                            placeholder="Senha" />
+                    </div>
 
-                             value={this.state.email}
-                             onChange={this.atualizaStateCampo}
-                             placeholder="username"
-                             />
+                    {
+                        this.state.isLoading === false &&
+                        <div className="justify-center">
+                            <input id="btn-login"
+                            required
+                            type="submit"
+                            name="Entrar"
+                            ></input>
+                        </div>
+                    }
+                </form>
+            </section>
+        </div>
 
-                            <input
-                             type="password"
-                             name="senha"
-
-                             value={this.state.senha}
-                             onChange={this.atualizaStateCampo}
-                             placeholder="password"
-                             />
-
-                             <button type='submit'>
-                                 Login
-                             </button>
-                         </form>
-                    </section>
-                </main>
-            </div>
-        )
-    }
+    )
 }
+
+};
 
 export default Login;
